@@ -23,7 +23,7 @@ class Router private constructor() {
         /**
          * コントローラを探索するパッケージ。サブパッケージは探索しません
          */
-        const val CONTROLLER_PACKAGE_NAME = "com.kttpd.controller"
+        const val CONTROLLER_PACKAGE_NAME = "com.kttpd.web"
         private lateinit var instance: Router
         fun getInstance(): Router {
             synchronized(this) {
@@ -36,8 +36,8 @@ class Router private constructor() {
     }
 
     /**
-     * コントローラの探索。[ksugimori.http.webapp.Router.CONTROLLER_PACKAGE_NAME]
-     * で指定されたパッケージのクラスで、[ksugimori.http.webapp.RequestMapping] アノテーションが付いたクラスを探し、リクエストパスと紐付ける。
+     * コントローラの探索 [com.kttpd.web: CONTROLLER_PACKAGE_NAME]
+     * で指定されたパッケージのクラスで、[com.kttpd.web] アノテーションが付いたクラスを探し、リクエストパスと紐付ける。
      *
      * @return
      */
