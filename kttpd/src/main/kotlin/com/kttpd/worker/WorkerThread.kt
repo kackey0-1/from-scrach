@@ -19,7 +19,7 @@ import java.util.Date
 
 class WorkerThread(
     private val socket: Socket,
-    val router: Router = Router.getInstance(),
+    private val router: Router = Router.getInstance(),
 ): Thread() {
 
     companion object {

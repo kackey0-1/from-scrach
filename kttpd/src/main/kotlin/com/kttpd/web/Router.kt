@@ -19,6 +19,22 @@ class Router private constructor() {
         routingTable = searchRoutedHandler()
     }
 
+    companion object {
+        /**
+         * コントローラを探索するパッケージ。サブパッケージは探索しません
+         */
+        const val CONTROLLER_PACKAGE_NAME = "com.kttpd.controller"
+        private lateinit var instance: Router
+        fun getInstance(): Router {
+            synchronized(this) {
+                if (!::instance.isInitialized) {
+                    instance = Router()
+                }
+                return instance
+            }
+        }
+    }
+
     /**
      * コントローラの探索。[ksugimori.http.webapp.Router.CONTROLLER_PACKAGE_NAME]
      * で指定されたパッケージのクラスで、[ksugimori.http.webapp.RequestMapping] アノテーションが付いたクラスを探し、リクエストパスと紐付ける。
@@ -28,7 +44,8 @@ class Router private constructor() {
     private fun searchRoutedHandler(): Map<String, Controller> {
         val table: MutableMap<String, Controller> = HashMap()
         val classLoader = Thread.currentThread().contextClassLoader!!
-        val resource: URL = classLoader.getResource(CONTROLLER_PACKAGE_NAME.replace('.', '/'))
+        val path = CONTROLLER_PACKAGE_NAME.replace('.', '/')
+        val resource: URL = classLoader.getResource(path)
         val packageDir: Path = try {
             Paths.get(resource.toURI())
         } catch (e: URISyntaxException) {
@@ -72,16 +89,5 @@ class Router private constructor() {
             }
         }
         return BasicHttpController()
-    }
-
-    companion object {
-        /**
-         * コントローラを探索するパッケージ。サブパッケージは探索しません
-         */
-        const val CONTROLLER_PACKAGE_NAME = "com.kttpd.controller"
-        private lateinit var instance: Router
-        fun getInstance(): Router {
-            return instance
-        }
     }
 }
