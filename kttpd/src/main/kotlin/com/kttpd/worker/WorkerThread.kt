@@ -10,7 +10,7 @@ import com.kttpd.message.Response
 import com.kttpd.message.parseRequest
 import com.kttpd.message.serializeResponse
 import com.kttpd.readErrorPage
-import com.kttpd.web.Controller
+import com.kttpd.web.controller.Controller
 import java.io.IOException
 import java.io.InputStream
 import java.net.Socket
