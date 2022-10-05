@@ -1,4 +1,4 @@
-package com.kttpd.web
+package com.kttpd.web.controller
 
 import com.google.common.io.Files.getFileExtension
 import com.kttpd.common.Constants
@@ -10,6 +10,7 @@ import com.kttpd.getDocumentRoot
 import com.kttpd.message.Request
 import com.kttpd.message.Response
 import com.kttpd.readErrorPage
+import com.kttpd.web.RequestMapping
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.charset.StandardCharsets

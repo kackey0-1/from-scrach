@@ -1,5 +1,7 @@
 package com.kttpd.web
 
+import com.kttpd.web.controller.BasicHttpController
+import com.kttpd.web.controller.Controller
 import java.io.IOException
 import java.net.URISyntaxException
 import java.net.URL
@@ -23,7 +25,7 @@ class Router private constructor() {
         /**
          * コントローラを探索するパッケージ。サブパッケージは探索しません
          */
-        const val CONTROLLER_PACKAGE_NAME = "com.kttpd.web"
+        const val CONTROLLER_PACKAGE_NAME = "com.kttpd.web.controller"
         private lateinit var instance: Router
         fun getInstance(): Router {
             synchronized(this) {
