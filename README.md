@@ -2,13 +2,13 @@
 
 ```mermaid
 sequenceDiagram
-    participant LocalPC
+    participant Client
     participant Server
-    LocalPC->>Server: Request
+    Client->>Server: Request
     Server->>Server: Request解析
     Server->>Server: Resource読み取り
     Server->>Server: Resposne生成
-    Server-->>LocalPC: Reponse
+    Server-->>Client: Reponse
 ```
 
 ## HTTP request/response sample
