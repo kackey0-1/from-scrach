@@ -9,10 +9,14 @@
 ## How to setup
 [How to setup for OS from scrach](https://qiita.com/yamoridon/items/4905765cc6e4f320c9b5)
 
+```bash
+export OS_FROM_SCRATCH=$HOME/dev/from-scrach/os-c
+```
+
 ### EDK II の準備
 
 ```bash
-cd $HOME
+cd $OS_FROM_SCRATCH
 git clone https://github.com/tianocore/edk2.git
 cd edk2
 git checkout 38c8be123aced4cc8ad5c7e0da9121a181b94251
@@ -24,7 +28,7 @@ make
 
 ### mikanos-build リポジトリの準備
 ```bash
-cd $HOME
+cd $OS_FROM_SCRATCH
 git clone https://github.com/uchan-nos/mikanos-build.git osbook
 cd osbook/devenv
 curl -L https://github.com/uchan-nos/mikanos-build/releases/download/v2.0/x86_64-elf.tar.gz | tar xz
@@ -105,21 +109,21 @@ export PATH=/opt/homebrew/opt/llvm/bin:$PATH
 ```bash
 brew install nasm dosfstools binutils
 # Intel Mac の場合
-export PATH=/usr/local/opt/binutils/bin:$PATH
+# export PATH=/usr/local/opt/binutils/bin:$PATH
 # Apple Silicon Mac の場合
 export PATH=/opt/homebrew/sbin:/opt/homebrew/opt/binutils/bin:$PATH
 ```
 
 ### 「2.2 EDK II でハローワールド」をビルドする
 ```bash
-cd $HOME
+cd $OS_FROM_SCRATCH
 mkdir workspace
 cd workspace
 git clone https://github.com/uchan-nos/mikanos.git
 cd mikanos
 git checkout osbook_day02a
-cd $HOME/edk2
-ln -s $HOME/workspace/mikanos/MikanLoaderPkg .
+cd $OS_FROM_SCRATCH/edk2
+ln -s $OS_FROM_SCRATCH/workspace/mikanos/MikanLoaderPkg .
 source edksetup.sh
 ```
 
@@ -138,10 +142,10 @@ source edksetup.sh
 build
 ```
 
-$HOME/edk2/Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi というファイルが作られれば成功
+$OS_FROM_SCRATCH/edk2/Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi というファイルが作られれば成功
 
 ### QEMU で実行
 ```bash
-$HOME/osbook/devenv/run_qemu.sh $HOME/edk2/Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi
+$OS_FROM_SCRATCH/osbook/devenv/run_qemu.sh $OS_FROM_SCRATCH/edk2/Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi
 ```
 
