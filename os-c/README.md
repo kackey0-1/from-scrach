@@ -131,12 +131,12 @@ source edksetup.sh
   - TOOL_CHAIN_TAG が本とは異なるので注意
   - CLANG38 ツールチェインは Linux でしか使えないため代わりに CLANGPDB ツールチェインを使用
 
-|設定項目|設定値|
-|---|---|
-|ACTIVE_PLATFORM|MikanLoaderPkg/MikanLoaderPkg.dsc|
-|TARGET|DEBUG|
-|TARGET_ARCH|X64|
-|TOOL_CHAIN_TAG|CLANGPDB|
+| 設定項目            | 設定値                               |
+|-----------------|-----------------------------------|
+| ACTIVE_PLATFORM | MikanLoaderPkg/MikanLoaderPkg.dsc |
+| TARGET          | DEBUG                             |
+| TARGET_ARCH     | X64                               |
+| TOOL_CHAIN_TAG  | CLANGPDB                          |
 
 ```bash
 build
