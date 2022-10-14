@@ -1,11 +1,11 @@
 ```bash
 export OS_FROM_SCRATCH=$HOME/dev/from-scrach/os-c
 cd $OS_FROM_SCRATCH/edk2
-ln -s $OS_FROM_SCRATCH/workspace/mikanos/MikanLoaderPkg ./
+ln -s $OS_FROM_SCRATCH/workspace/oscode/MikanLoaderPkg ./
 
 l MikanLoaderPkg
 rm MikanLoaderPkg
-ln -s $OS_FROM_SCRATCH/workspace/mikanos/MikanLoaderPkg ./
+ln -s $OS_FROM_SCRATCH/workspace/oscode/MikanLoaderPkg ./
 
 source edksetup.sh
 

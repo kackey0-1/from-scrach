@@ -1,5 +1,9 @@
 # OS自作
 
+## Working Branches
+1. feature/01_hello_world
+2. 
+
 ## Environment
 - OS: Ubuntu
   - [How to run Ubuntu on M1 Mac](https://medium.com/@paulrobu/how-to-run-ubuntu-22-04-vms-on-apple-m1-arm-based-systems-for-free-c8283fb38309)
