@@ -25,6 +25,8 @@ EFI_STATUS GetMemoryMap(struct MemoryMap* map) {
   }
 
   map->map_size = map->buffer_size;
+  // When you use Boot Services like memory, global variable of gBS is available
+  // For Runtime Services, there is gRS.
   return gBS->GetMemoryMap(
       &map->map_size,
       (EFI_MEMORY_DESCRIPTOR*)map->buffer,
@@ -128,18 +130,20 @@ EFI_STATUS EFIAPI UefiMain(
   Print(L"Hello, Mikan World!\n");
 
   // #@@range_begin(main)
+  // setting memmap_buf as 16KiB
   CHAR8 memmap_buf[4096 * 4];
   struct MemoryMap memmap = {sizeof(memmap_buf), memmap_buf, 0, 0, 0, 0};
   GetMemoryMap(&memmap);
 
+  // opening output file dir 
   EFI_FILE_PROTOCOL* root_dir;
   OpenRootDir(image_handle, &root_dir);
-
   EFI_FILE_PROTOCOL* memmap_file;
+  // opening output file to write
   root_dir->Open(
       root_dir, &memmap_file, L"\\memmap",
       EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
-
+  // save output file to opened dir
   SaveMemoryMap(&memmap, memmap_file);
   memmap_file->Close(memmap_file);
   // #@@range_end(main)
