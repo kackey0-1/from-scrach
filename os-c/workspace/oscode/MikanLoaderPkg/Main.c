@@ -85,7 +85,7 @@ EFI_STATUS SaveMemoryMap(struct MemoryMap* map, EFI_FILE_PROTOCOL* file) {
         desc->PhysicalStart, desc->NumberOfPages,
         desc->Attribute & 0xffffflu);
 
-
+    // AsciiSPrint is EDK II's library.
     len = AsciiSPrint(
         buf, sizeof(buf),
         "%u, %x, %-ls, %08lx, %lx, %lx\n",
@@ -143,7 +143,7 @@ EFI_STATUS EFIAPI UefiMain(
   root_dir->Open(
       root_dir, &memmap_file, L"\\memmap",
       EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
-  // save output file to opened dir
+  // save output file to opened dir as csv format
   SaveMemoryMap(&memmap, memmap_file);
   memmap_file->Close(memmap_file);
   // #@@range_end(main)
