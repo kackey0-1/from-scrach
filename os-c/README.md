@@ -3,6 +3,7 @@
 ## Working Branches
 1. feature/01_hello_world
 2. feature/02_edk2_and_mem
+3. feature/03_bootloader
 
 ## Environment
 - OS: Ubuntu
