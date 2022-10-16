@@ -150,6 +150,6 @@ info registers
 # step2
 x /2i 0x101010
 ```
-
+References: http://ylb.jp/Tech/x86_64ASM/x86_64_onMac.html
 
 
