@@ -6,6 +6,7 @@
 #include  <Protocol/SimpleFileSystem.h>
 #include  <Protocol/DiskIo2.h>
 #include  <Protocol/BlockIo.h>
+#include  <Guid/FileInfo.h>
 
 // #@@range_begin(struct_memory_map)
 struct MemoryMap {
@@ -80,73 +81,121 @@ EFI_STATUS SaveMemoryMap(struct MemoryMap* map, EFI_FILE_PROTOCOL* file) {
        iter += map->descriptor_size, i++) {
     EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)iter;
 
-    Print("%u, %x, %-ls, %08lx, %lx, %lx\n",
-        i, desc->Type, GetMemoryTypeUnicode(desc->Type),
-        desc->PhysicalStart, desc->NumberOfPages,
-        desc->Attribute & 0xffffflu);
+      Print(L"%u, %x, %-ls, %08lx, %lx, %lx\n",
+          i, desc->Type, GetMemoryTypeUnicode(desc->Type),
+          desc->PhysicalStart, desc->NumberOfPages,
+          desc->Attribute & 0xffffflu);
 
-    // AsciiSPrint is EDK II's library.
-    len = AsciiSPrint(
-        buf, sizeof(buf),
-        "%u, %x, %-ls, %08lx, %lx, %lx\n",
-        i, desc->Type, GetMemoryTypeUnicode(desc->Type),
-        desc->PhysicalStart, desc->NumberOfPages,
-        desc->Attribute & 0xffffflu);
-    file->Write(file, &len, buf);
+      // AsciiSPrint is EDK II's library.
+      len = AsciiSPrint(
+          buf, sizeof(buf),
+          "%u, %x, %-ls, %08lx, %lx, %lx\n",
+          i, desc->Type, GetMemoryTypeUnicode(desc->Type),
+          desc->PhysicalStart, desc->NumberOfPages,
+          desc->Attribute & 0xffffflu);
+      file->Write(file, &len, buf);
+    }
+
+    return EFI_SUCCESS;
+  }
+  // #@@range_end(save_memory_map)
+
+  EFI_STATUS OpenRootDir(EFI_HANDLE image_handle, EFI_FILE_PROTOCOL** root) {
+    EFI_LOADED_IMAGE_PROTOCOL* loaded_image;
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* fs;
+
+    gBS->OpenProtocol(
+        image_handle,
+        &gEfiLoadedImageProtocolGuid,
+        (VOID**)&loaded_image,
+        image_handle,
+        NULL,
+        EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+
+    gBS->OpenProtocol(
+        loaded_image->DeviceHandle,
+        &gEfiSimpleFileSystemProtocolGuid,
+        (VOID**)&fs,
+        image_handle,
+        NULL,
+        EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+
+    fs->OpenVolume(fs, root);
+
+    return EFI_SUCCESS;
   }
 
-  return EFI_SUCCESS;
-}
-// #@@range_end(save_memory_map)
+  EFI_STATUS EFIAPI UefiMain(
+      EFI_HANDLE image_handle,
+      EFI_SYSTEM_TABLE* system_table) {
+    Print(L"Hello, Mikan World!\n");
 
-EFI_STATUS OpenRootDir(EFI_HANDLE image_handle, EFI_FILE_PROTOCOL** root) {
-  EFI_LOADED_IMAGE_PROTOCOL* loaded_image;
-  EFI_SIMPLE_FILE_SYSTEM_PROTOCOL* fs;
+    // #@@range_begin(main)
+    // setting memmap_buf as 16KiB
+    CHAR8 memmap_buf[4096 * 4];
+    struct MemoryMap memmap = {sizeof(memmap_buf), memmap_buf, 0, 0, 0, 0};
+    GetMemoryMap(&memmap);
 
-  gBS->OpenProtocol(
-      image_handle,
-      &gEfiLoadedImageProtocolGuid,
-      (VOID**)&loaded_image,
-      image_handle,
-      NULL,
-      EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+    // opening output file dir 
+    EFI_FILE_PROTOCOL* root_dir;
+    OpenRootDir(image_handle, &root_dir);
+    EFI_FILE_PROTOCOL* memmap_file;
+    // opening output file to write
+    root_dir->Open(
+        root_dir, &memmap_file, L"\\memmap",
+        EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+    // save output file to opened dir as csv format
+    SaveMemoryMap(&memmap, memmap_file);
+    memmap_file->Close(memmap_file);
+    // #@@range_end(main)
 
-  gBS->OpenProtocol(
-      loaded_image->DeviceHandle,
-      &gEfiSimpleFileSystemProtocolGuid,
-      (VOID**)&fs,
-      image_handle,
-      NULL,
-      EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+    // #@@range_begin(read_kernel)
+    EFI_FILE_PROTOCOL* kernel_file;
+    root_dir->Open(
+        root_dir, &kernel_file, L"\\kernel.elf",
+        EFI_FILE_MODE_READ, 0);
+    
+    UINTN file_info_size = sizeof(EFI_FILE_INFO) + sizeof(CHAR16);
+    UINT8 file_info_buffer[file_info_size];
+    kernel_file->GetInfo(
+        kernel_file, &gEfiFileInfoGuid,
+      &file_info_size, file_info_buffer);
 
-  fs->OpenVolume(fs, root);
+  EFI_FILE_INFO* file_info = (EFI_FILE_INFO*)file_info_buffer;
+  UINTN kernel_file_size = file_info->FileSize;
 
-  return EFI_SUCCESS;
-}
+  EFI_PHYSICAL_ADDRESS kernel_base_addr = 0x100000;
+  gBS->AllocatePages(
+      AllocateAddress, EfiLoaderData,
+      (kernel_file_size + 0xfff) / 0x1000, &kernel_base_addr);
+  kernel_file->Read(kernel_file, &kernel_file_size, (VOID*)kernel_base_addr);
+  Print(L"Kernel: 0x%0lx (%lu bytes)\n", kernel_base_addr, kernel_file_size);
+  // #@@range_end(read_kernel)
 
-EFI_STATUS EFIAPI UefiMain(
-    EFI_HANDLE image_handle,
-    EFI_SYSTEM_TABLE* system_table) {
-  Print(L"Hello, Mikan World!\n");
+  // #@@range_begin(exit_bs)
+  EFI_STATUS status;
+  status = gBS->ExitBootServices(image_handle, memmap.map_key);
+  if (EFI_ERROR(status)) {
+    status = GetMemoryMap(&memmap);
+    if (EFI_ERROR(status)) {
+      Print(L"failed to get memory map: %r\n", status);
+      while (1);
+    }
+    status = gBS->ExitBootServices(image_handle, memmap.map_key);
+    if (EFI_ERROR(status)) {
+      Print(L"Could not exit boot service: %r\n", status);
+      while (1);
+    }
+  }
+  // #@@range_end(exit_bs)
 
-  // #@@range_begin(main)
-  // setting memmap_buf as 16KiB
-  CHAR8 memmap_buf[4096 * 4];
-  struct MemoryMap memmap = {sizeof(memmap_buf), memmap_buf, 0, 0, 0, 0};
-  GetMemoryMap(&memmap);
+  // #@@range_begin(call_kernel)
+  UINT64 entry_addr = *(UINT64*)(kernel_base_addr + 24);
 
-  // opening output file dir 
-  EFI_FILE_PROTOCOL* root_dir;
-  OpenRootDir(image_handle, &root_dir);
-  EFI_FILE_PROTOCOL* memmap_file;
-  // opening output file to write
-  root_dir->Open(
-      root_dir, &memmap_file, L"\\memmap",
-      EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
-  // save output file to opened dir as csv format
-  SaveMemoryMap(&memmap, memmap_file);
-  memmap_file->Close(memmap_file);
-  // #@@range_end(main)
+  typedef void EntryPointType(void);
+  EntryPointType* entry_point = (EntryPointType*)entry_addr;
+  entry_point();
+  // #@@range_end(call_kernel)
 
   Print(L"All done\n");
 
