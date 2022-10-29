@@ -87,7 +87,7 @@ EFI_STATUS SaveMemoryMap(struct MemoryMap* map, EFI_FILE_PROTOCOL* file) {
         desc->PhysicalStart, desc->NumberOfPages,
         desc->Attribute & 0xffffflu);
 
-    // AsciiSPrint is EDK II's library.
+    // AsciiSPrint is EDK II 's library.
     len = AsciiSPrint(
         buf, sizeof(buf),
         "%u, %x, %-ls, %08lx, %lx, %lx\n",
