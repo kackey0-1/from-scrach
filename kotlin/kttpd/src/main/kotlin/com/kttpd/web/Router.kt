@@ -46,8 +46,8 @@ class Router private constructor() {
     private fun searchRoutedHandler(): Map<String, Controller> {
         val table: MutableMap<String, Controller> = HashMap()
         val classLoader = Thread.currentThread().contextClassLoader!!
-        val path = CONTROLLER_PACKAGE_NAME.replace('.', '/')
-        val resource: URL = classLoader.getResource(path)
+        val requestedPath = CONTROLLER_PACKAGE_NAME.replace('.', '/')
+        val resource: URL = classLoader.getResource(requestedPath)
         val packageDir: Path = try {
             Paths.get(resource.toURI())
         } catch (e: URISyntaxException) {
@@ -61,7 +61,7 @@ class Router private constructor() {
                     try {
                         val clazz = Class.forName(className)
                         if (!clazz.isAnnotationPresent(RequestMapping::class.java)) continue
-                        val path: String = clazz.getDeclaredAnnotation(RequestMapping::class.java).value
+                        val path = clazz.getDeclaredAnnotation(RequestMapping::class.java).value
                         val controller = clazz.getConstructor().newInstance() as Controller
                         table[path] = controller
                     } catch (e: InstantiationException) {
