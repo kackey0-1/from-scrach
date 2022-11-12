@@ -100,7 +100,7 @@ class BasicHttpController : Controller() {
             val contentType: String = extensionToContentType(ext)
             response.addHeaderField("Content-Type", contentType)
         } catch (e: IOException) {
-            response = Response(version = Constants.HTTP_VERSION_1, status = Status.NOT_FOUND)
+            response = Response(version = Constants.HTTP_VERSION_1, status = Status.OK)
             response.body = readErrorPage(Status.NOT_FOUND)
             response.addHeaderField("Content-Length", response.body.size.toString())
         }

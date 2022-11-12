@@ -20,8 +20,10 @@ fun main() {
 
     while (true) {
         val socket: Socket = server.accept()
-        // socket オブジェクトを渡して各リクエストの処理は別スレッドで
-         executor.submit(WorkerThread(socket))
+        // socket オブジェクトを渡して各リクエストの処理は別スレッド
+        println("request started: $executor")
+        executor.submit(WorkerThread(socket))
+        println("request ended: $executor")
     }
 }
 
