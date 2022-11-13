@@ -1,10 +1,10 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
+val kotlin_version: String by project  // "2.1.3"
+val ktor_version: String by project    // "1.7.10"
+val logback_version: String by project // "1.2.11"
 
 plugins {
     application
-    kotlin("jvm")
+    kotlin("jvm") version "1.7.10"
     id("io.ktor.plugin") version "2.1.3"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
 }
