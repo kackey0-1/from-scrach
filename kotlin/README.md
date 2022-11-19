@@ -26,3 +26,16 @@ A page with an image
   <IMG SRC="/myimage.gif">
 </HTML>
 ```
+
+# Gradle Plugin
+
+```bash
+./gradlew :kotlin-gradle-plugin:publishToMavenLocal
+./gradlew exampleTask
+```
+
+```
+plugins {
+    id("kotlin-gradle-plugin-example") version "1.0"
+}
+```
