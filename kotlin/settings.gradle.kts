@@ -17,4 +17,5 @@ rootProject.name = "kotlin-projects"
 include("kttpd")
 include("ktor-http-api")
 include("ktor-websocket-chat")
+include("ktor-websocket-chat-client")
 include("kotlin-gradle-plugin")
