@@ -16,4 +16,5 @@ pluginManagement {
 rootProject.name = "kotlin-projects"
 include("kttpd")
 include("ktor-http-api")
+include("ktor-websocket-chat")
 include("kotlin-gradle-plugin")
