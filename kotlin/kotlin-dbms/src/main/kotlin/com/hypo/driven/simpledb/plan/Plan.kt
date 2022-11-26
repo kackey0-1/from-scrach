@@ -1,6 +1,5 @@
 package com.hypo.driven.simpledb.plan
 
-import com.sun.tools.jdeprscan.scan.Scan
 import javax.xml.validation.Schema
 
 /**
@@ -14,7 +13,7 @@ interface Plan {
      * 実行計画に関連するScanクラスを開く
      * Scanはテーブルを読むのに使用される
      */
-    fun open(): Scan
+//    fun open(): Scan
 
     /**
      * Scanが読み込みを完了するまでに起きるブロックアクセスの回数を推定し返す

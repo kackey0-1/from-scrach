@@ -20,6 +20,10 @@ tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
 }
 
+tasks.named<JavaExec>("run") {
+    standardInput = System.`in`
+}
+
 application {
-    mainClass.set("simpledb.server.StartServer")
+    mainClass.set("com.hypo.driven.simpledb.server.ServerKt")
 }

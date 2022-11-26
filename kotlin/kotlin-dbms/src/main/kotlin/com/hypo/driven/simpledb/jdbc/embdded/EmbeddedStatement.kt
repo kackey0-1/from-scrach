@@ -5,13 +5,13 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 class EmbeddedStatement(
-    private val connection: EmbeddedConnection,
+//    private val connection: EmbeddedConnection,
 //    private val planner: Planner,
 ) : StatementAdapter() {
     override fun executeQuery(sql: String?): ResultSet {
         try {
-            val transaction = connection.currentTransaction
-            val cmd = sql ?: throw RuntimeException("null sql error")
+//            val transaction = connection.currentTransaction
+//            val cmd = sql ?: throw RuntimeException("null sql error")
 //            val plan: Plan = planner.createQueryPlan(cmd, transaction)
 //            return EmbeddedResultSet(plan, connection)
             throw SQLException("operation not implemented")
@@ -23,8 +23,8 @@ class EmbeddedStatement(
 
     override fun executeUpdate(sql: String?): Int {
         try {
-            val transaction = connection.currentTransaction
-            val cmd = sql ?: throw RuntimeException("null sql error")
+//            val transaction = connection.currentTransaction
+//            val cmd = sql ?: throw RuntimeException("null sql error")
             throw SQLException("operation not implemented")
 //            val result = planner.executeUpdate(cmd, transaction)
 //            connection.commit()
