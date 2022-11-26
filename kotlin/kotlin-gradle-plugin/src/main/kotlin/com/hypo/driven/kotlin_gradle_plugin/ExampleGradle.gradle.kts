@@ -1,4 +1,4 @@
-package com.hypo.simpledb.kotlin_gradle_plugin
+package com.hypo.driven.kotlin_gradle_plugin
 
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
