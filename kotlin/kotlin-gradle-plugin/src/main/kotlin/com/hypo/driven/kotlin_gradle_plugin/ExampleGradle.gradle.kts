@@ -1,6 +1,7 @@
 package com.hypo.driven.kotlin_gradle_plugin
 
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.apply
 
 class SamplePlugin : Plugin<Project> {
     override fun apply(target: Project) {
