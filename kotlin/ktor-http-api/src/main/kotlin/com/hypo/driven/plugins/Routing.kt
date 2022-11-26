@@ -1,9 +1,9 @@
-package com.hypo.simpledb.plugins
+package com.hypo.driven.plugins
 
-import com.hypo.simpledb.routes.customerRouting
-import com.hypo.simpledb.routes.getOrderRoute
-import com.hypo.simpledb.routes.listOrdersRoute
-import com.hypo.simpledb.routes.totalizeOrderRoute
+import com.hypo.driven.routes.customerRouting
+import com.hypo.driven.routes.getOrderRoute
+import com.hypo.driven.routes.listOrdersRoute
+import com.hypo.driven.routes.totalizeOrderRoute
 import io.ktor.server.application.Application
 import io.ktor.server.routing.routing
 

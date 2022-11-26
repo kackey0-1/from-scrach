@@ -1,4 +1,4 @@
-package com.hypo.simpledb.models
+package com.hypo.driven.models
 
 import kotlinx.serialization.Serializable
 

@@ -1,7 +1,7 @@
-package com.hypo.simpledb.routes
+package com.hypo.driven.routes
 
-import com.hypo.simpledb.models.Customer
-import com.hypo.simpledb.models.customerStorage
+import com.hypo.driven.models.Customer
+import com.hypo.driven.models.customerStorage
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.request.receive

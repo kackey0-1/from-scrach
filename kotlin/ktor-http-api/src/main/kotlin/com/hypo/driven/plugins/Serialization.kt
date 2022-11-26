@@ -1,4 +1,4 @@
-package com.hypo.simpledb.plugins
+package com.hypo.driven.plugins
 
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application

@@ -1,7 +1,7 @@
-package com.hypo.simpledb
+package com.hypo.driven
 
-import com.hypo.simpledb.plugins.configureRouting
-import com.hypo.simpledb.plugins.configureSockets
+import com.hypo.driven.plugins.configureRouting
+import com.hypo.driven.plugins.configureSerialization
 import io.ktor.server.application.Application
 import io.ktor.server.netty.EngineMain
 
@@ -9,5 +9,5 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
     configureRouting()
-    configureSockets()
+    configureSerialization()
 }
