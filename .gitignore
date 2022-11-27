@@ -33,3 +33,4 @@ target
 # unrelated files
 .DS_Store
 .tool-versions
+sample.txt
