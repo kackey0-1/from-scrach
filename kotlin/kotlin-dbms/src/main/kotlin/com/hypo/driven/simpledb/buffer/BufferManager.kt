@@ -2,91 +2,140 @@ package com.hypo.driven.simpledb.buffer
 
 import com.hypo.driven.simpledb.file.BlockId
 import com.hypo.driven.simpledb.file.FileManager
-import com.hypo.driven.simpledb.file.Page
 import com.hypo.driven.simpledb.log.LogManager
 
 /**
- * Pageに関連する4角情報を保持する
- * 1. Pageに関連するBlockId: ディスクの場所
- * 2. Pageが関連付けられた回数。
- * 3. Pageが修正されたかどうかの数値。修正されていない場合は-1、そうでない場合はPageを修正したトランザクションの識別子
- * 4. ログの情報。Pageが修正されば場合は最も最新のログレコードの識別子を保持する。
+ * システムの起動時1つ作成される
  *
  * @property fm FileManagerクラス
  * @property lm LogManagerクラス
- * @property contents 関連するPageクラス
- * @property blockId 関連するBlockIdクラス
- * @property pins Pageが関連付けられた回数。新たにブロックを割り当てられた場合は0になる。
- * @property txnum 関連するトランザクションの識別子。Pageが修正されたかどうかの識別子。
- * @property lsn 関連付けられたPageが修正された場合に作成されるログレコードの識別子。
+ * @property numBuffers バッファプールのサイズ
+ * @property bufferPool 管理しているバッファ
+ * @property numAvailable 空いているBufferの数
+ * @property MAX_TIME バッファの空きを探す時間
+ * @property lock
  */
-class Buffer(
+class BufferManager(
     val fm: FileManager,
     val lm: LogManager,
+    var numBuffers: Int,
 ) {
-    private var contents: Page = Page(fm.blockSize)
-    private var blockId: BlockId? = null
-    private var pins = 0
-    private var txnum = -1
-    private var lsn = -1
+    private val bufferPool: MutableList<Buffer> = mutableListOf<Buffer>()
+    private var numAvailable = numBuffers
+    private val MAX_TIME: Long = 10000 // 10 seconds
+    private val lock = java.lang.Object()
 
-    fun contents(): Page {
-        return contents
-    }
-
-    fun blockId(): BlockId? {
-        return blockId
-    }
-
-    /**
-     * クライアントが現在のPageを修正した場合は適切なログレコードの生成とともにsetModifiedが呼ばれる
-     * [newTxnum]修正中のtransactionを識別する数値と生成したログレコードの識別子を受け取る
-     * [newLsn]が-1の場合は今回のPageの操作ではログレコードが生成されていない
-     */
-    fun setModified(newTxnum: Int, newLsn: Int) {
-        txnum = newTxnum
-        if (lsn >= 0) lsn = newLsn
-    }
-
-    fun isPinned(): Boolean {
-        return pins > 0
-    }
-
-    fun modifyingTx(): Int {
-        return txnum
-    }
-
-    /**
-     * バッファをディスクブロックに関連付ける
-     * flushを呼び現在のブロックの変更を保存し、新しく渡されたブロック[b]の内容をPageに関連付ける
-     * 関連付けられている内容が変わるのでpinsを0にする
-     */
-    fun assignToBlock(b: BlockId) {
-        flush()
-        blockId = b
-        fm.read(blockId!!, contents)
-        pins = 0
-    }
-
-    /**
-     * バッファに割り当てられたディスクブロックがPageと同じ値になるようにしする。
-     * Pageが修正されてない場合は何もしない、
-     * 修正されている（txnumが0以上）場合はLogManagerのflushを呼び、
-     * 修正内容のログレコードとPageの内容をディスクに書き込み、Pageの修正フラグ（txnum）を-1に設定する
-     */
-    fun flush() {
-        if (txnum >= 0) {
-            lm.flush(lsn)
-            fm.write(blockId!!, contents)
-            txnum = -1
+    init {
+        for (i in 0..numBuffers) {
+            bufferPool.add(i, Buffer(fm, lm))
         }
     }
 
-    fun pin() {
-        pins++
+    /**
+     * @return 空いているBufferの数を返す
+     */
+    @Synchronized
+    fun available(): Int {
+        return numAvailable
     }
 
-    fun unpin() {
-        pins--
+    /**
+     * Bufferの内容をディスクに書き出す
+     */
+    @Synchronized
+    fun flushAll(txnum: Int) {
+        for (buffer in bufferPool) {
+            if (buffer.modifyingTx() == txnum) buffer.flush()
+        }
+    }
+
+    /**
+     * 指定したBufferからPageを開放する
+     */
+    fun unpin(buffer: Buffer) {
+        synchronized(lock) {
+            buffer.unpin()
+            if (!buffer.isPinned()) {
+                // bufferが使用できる場合は使用できる数（numAvailable）を増やし、スレッドを開放
+                numAvailable++
+                lock.notifyAll()
+            }
+        }
+    }
+
+    /**
+     * 特定のブロックの内容を含んだページとBufferを結びつける（BufferがPageを持つ）
+     * @return バッファオブジェクト
+     */
+    fun pin(blockId: BlockId): Buffer {
+        synchronized(lock) {
+            try {
+                val timestamp = System.currentTimeMillis()
+                val buffer = tryToPin(blockId)
+                while (buffer == null && !waitingTooLong(timestamp)) {
+                    // 使用できるバッファがない場合スレッドを待機させる
+                    // 他のスレッドがバッファの使用をやめ、unpinを実行しnotifyAllを呼んだ場合
+                    // MAX_TIMEの時間まで待った場合
+                    lock.wait(MAX_TIME)
+                    val buffer = tryToPin(blockId)
+                }
+                if (buffer == null) throw BufferAbortException()
+
+                return buffer
+            } catch (e: InterruptedException) {
+                throw BufferAbortException()
+            }
+        }
+    }
+
+    private fun waitingTooLong(starttime: Long): Boolean {
+        return System.currentTimeMillis() - starttime > MAX_TIME
+    }
+
+    /**
+     * 指定されたディスク[blockId]にfindExistingBufferを使ってすでにバッファが割り当てられているか確認
+     * 割り当てられてなければchooseUnpinnedBufferを呼び、使用されていないバッファを探す
+     * 使用されてないバッファがあれば、バッファにすでに割り当てられているPageをディスクに書き込み、
+     * 指定した[blockId]をバッファに割り当てる
+     * 使用できるバッファがなければnullを返す
+     * @return 使用できるバッファ、ない場合はnull
+     */
+    private fun tryToPin(blockId: BlockId): Buffer? {
+        var buffer = findExistingBuffer(blockId)
+        if (buffer == null) {
+            buffer = chooseUnpinnedBuffer()
+            if (buffer == null) return null
+            buffer.assignToBlock(blockId)
+        }
+        // 指定された[blockId]が割り当てられているバッファが現在使用されてなければ
+        // 使用できる数を減らす（isPinnedがfalseなので現在はnumAvailableに含まれているがpinするので、今後は使用できる数に含まれない）
+        if (!buffer.isPinned()) numAvailable--
+        buffer.pin()
+        return buffer
+    }
+
+    /**
+     * 指定されたディスク[blockId]がバッファにすでに割り当てられていればバッファを返す
+     * @return 割り当てられているバッファ
+     */
+    private fun findExistingBuffer(blockId: BlockId): Buffer? {
+        for (buffer in bufferPool) {
+            val bId = buffer.blockId()
+            if (bId == blockId) {
+                return buffer
+            }
+        }
+        return null
+    }
+
+    /**
+     * 使用されていないバッファを返す
+     * @return 使用されていないバッファ
+     */
+    private fun chooseUnpinnedBuffer(): Buffer? {
+        for (buffer in bufferPool) {
+            if (!buffer.isPinned()) return buffer
+        }
+        return null
     }
 }
