@@ -14,7 +14,7 @@ abstract class DriverAdapter : Driver {
         throw SQLException("operation not implemented")
     }
 
-    override fun connect(url: String?, info: Properties?): Connection {
+    override fun connect(url: String, info: Properties): Connection {
         throw SQLException("operation not implemented")
     }
 

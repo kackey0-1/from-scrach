@@ -9,10 +9,10 @@ fun main(args: Array<String>) {
     val scanner = Scanner(System.`in`)
     print("Connect> ")
     val connectionString = scanner.nextLine()
-    val driver = EmbeddedDriver()
+//    val driver = EmbeddedDriver()
     try {
-        val connection = driver.connect(connectionString.replace(":", "/"), null)
-        val statement = connection.createStatement()
+//        val connection = driver.connect(connectionString.replace(":", "/"), null)
+//        val statement = connection.createStatement()
         print("\nSQL> ")
         while (scanner.hasNextLine()) {
             // process one line of input
@@ -21,11 +21,11 @@ fun main(args: Array<String>) {
                 break
             } else if (cmd.startsWith("select")) {
                 // do select query
-                doQuery(statement, cmd)
+//                doQuery(statement, cmd)
                 println(cmd)
             } else {
                 // do update query
-                doUpdate(statement, cmd)
+//                doUpdate(statement, cmd)
                 println(cmd)
             }
             print("\nSQL> ")

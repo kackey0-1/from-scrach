@@ -1,6 +1,5 @@
 package com.hypo.driven.simpledb.server
 
-import com.hypo.driven.simpledb.buffer.BufferManager
 import com.hypo.driven.simpledb.file.FileManager
 import com.hypo.driven.simpledb.log.LogManager
 import java.io.File
@@ -9,40 +8,40 @@ const val BLOCK_SIZE = 400
 const val BUFFER_SIZE = 8
 const val LOG_FILE = "simpledb.log"
 
-class SimpleDB {
-
-    var fileManager: FileManager
-    var logManager: LogManager
-    var bufferManager: BufferManager
-    lateinit var metadataManager: MetadataManager
-    lateinit var planner: Planner
-
-    constructor(directoryName: String,blockSize: Int, bufferSize: Int) {
-        val dbDirectory = File(directoryName)
-        fileManager = FileManager(dbDirectory, blockSize)
-        logManager = LogManager(fileManager, LOG_FILE)
-        bufferManager = BufferManager(fileManager, logManager, bufferSize)
-    }
-
-    constructor(directoryName: String): this(directoryName, BLOCK_SIZE, BUFFER_SIZE) {
-        val transaction = newTransaction()
-        val isNew = fileManager.isNew
-        if (isNew) {
-            println("creating new database")
-        } else {
-            println("recovering existing database")
-            transaction.recover()
-        }
-        metadataManager = MetadataManager(isNew, transaction)
-        val queryPlanner: QueryPlanner = BasicQueryPlanner(metadataManager)
-        val updatePlanner: UpdatePlanner = BasicUpdatePlanner(metadataManager)
-        val queryPlanner: QueryPlanner = HeuristicQueryPlanner(metadataManager)
-        val updatePlanner: UpdatePlanner = IndexUpdatePlanner(metadataManager)
-        planner = Planner(queryPlanner, updatePlanner)
-        transaction.commit()
-    }
-
-    fun newTransaction(): Transaction {
-        return Transaction(fileManager, bufferManager, logManager)
-    }
-}
+//class SimpleDB {
+//
+//    var fileManager: FileManager
+//    var logManager: LogManager
+//    var bufferManager: BufferManager
+//    lateinit var metadataManager: MetadataManager
+//    lateinit var planner: Planner
+//
+//    constructor(directoryName: String,blockSize: Int, bufferSize: Int) {
+//        val dbDirectory = File(directoryName)
+//        fileManager = FileManager(dbDirectory, blockSize)
+//        logManager = LogManager(fileManager, LOG_FILE)
+//        bufferManager = BufferManager(fileManager, logManager, bufferSize)
+//    }
+//
+//    constructor(directoryName: String): this(directoryName, BLOCK_SIZE, BUFFER_SIZE) {
+//        val transaction = newTransaction()
+//        val isNew = fileManager.isNew
+//        if (isNew) {
+//            println("creating new database")
+//        } else {
+//            println("recovering existing database")
+//            transaction.recover()
+//        }
+//        metadataManager = MetadataManager(isNew, transaction)
+//        val queryPlanner: QueryPlanner = BasicQueryPlanner(metadataManager)
+//        val updatePlanner: UpdatePlanner = BasicUpdatePlanner(metadataManager)
+//        val queryPlanner: QueryPlanner = HeuristicQueryPlanner(metadataManager)
+//        val updatePlanner: UpdatePlanner = IndexUpdatePlanner(metadataManager)
+//        planner = Planner(queryPlanner, updatePlanner)
+//        transaction.commit()
+//    }
+//
+//    fun newTransaction(): Transaction {
+//        return Transaction(fileManager, bufferManager, logManager)
+//    }
+//}
