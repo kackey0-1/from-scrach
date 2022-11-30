@@ -30,6 +30,8 @@ build
 target
 .idea
 bin
+workspace
+localhost
 
 # unrelated files
 .DS_Store
