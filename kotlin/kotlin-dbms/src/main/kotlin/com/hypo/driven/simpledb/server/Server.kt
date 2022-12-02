@@ -1,6 +1,5 @@
 package com.hypo.driven.simpledb.server
 
-import org.apache.derby.jdbc.ClientDataSource
 import org.apache.derby.jdbc.EmbeddedDriver
 import java.sql.ResultSet
 import java.sql.SQLException
