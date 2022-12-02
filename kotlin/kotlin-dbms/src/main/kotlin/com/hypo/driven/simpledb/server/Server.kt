@@ -1,13 +1,11 @@
 package com.hypo.driven.simpledb.server
 
-import org.apache.derby.jdbc.ClientDriver
-import org.apache.derby.jdbc.ClientDriver40
+import org.apache.derby.jdbc.ClientDataSource
 import org.apache.derby.jdbc.EmbeddedDriver
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
 import java.sql.Types
-import java.util.Properties
 import java.util.Scanner
 
 fun main(args: Array<String>) {
@@ -50,28 +48,64 @@ fun main(args: Array<String>) {
 
 private fun init(stmt: Statement) {
     try {
-        val drop = "DROP TABLE STUDENT"
-        stmt.executeUpdate(drop)
-        val create = "CREATE TABLE STUDENT(SId int, SName VARCHAR(10), MajorId int, GradYear int)"
-        stmt.executeUpdate(create)
-        println("Created table STUDENT")
-        val insert = "INSERT INTO STUDENT VALUES"
-        val students = arrayOf(
-            "(1, 'Zhang', 10, 2004)",
-            "(2, 'Wang', 20, 2005)",
-            "(3, 'Li', 10, 2004)",
-            "(4, 'Cheng', 20, 2005)",
-            "(5, 'He', 30, 2004)",
-            "(6, 'Wu', 10, 2004)",
-            "(7, 'Zhao', 10, 2004)",
-            "(8, 'Qian', 20, 2005)",
-            "(9, 'Sun', 30, 2004)",
-            "(10, 'Liu', 20, 2004)",
-            "(11, 'Feng', 30, 2005)"
+        val initTables: List<Pair<String, Array<String>>> = listOf(
+            Pair(
+                "CREATE TABLE STUDENT (SId int, SName VARCHAR(10), MajorId int, GradYear int)",
+                arrayOf(
+                    "(1, 'Zhang', 10, 2004)",
+                    "(2, 'Wang', 20, 2005)",
+                    "(3, 'Li', 10, 2004)",
+                    "(4, 'Cheng', 20, 2005)",
+                    "(5, 'He', 30, 2004)",
+                    "(6, 'Wu', 10, 2004)",
+                    "(7, 'Zhao', 10, 2004)",
+                    "(8, 'Qian', 20, 2005)",
+                    "(9, 'Sun', 30, 2004)",
+                    "(10, 'Liu', 20, 2004)",
+                    "(11, 'Feng', 30, 2005)",
+                )
+            ),
+            Pair(
+                "CREATE TABLE DEPT (DId int, DName VARCHAR(8))",
+                arrayOf(
+                    "(10, 'CompSc')",
+                    "(20, 'Math')",
+                    "(30, 'Eng')",
+                    "(40, 'Physics')",
+                )
+            ),
+            Pair(
+                "CREATE TABLE COURSE (CId int, Title VARCHAR(20), DeptId int)",
+                arrayOf(
+                    "(12, 'Database Systems', 10)",
+                    "(22, 'Formal Languages', 10)",
+                    "(32, 'Advanced Algorithms', 10)",
+                    "(42, 'Scientific Computing', 40)",
+                    "(52, 'Numerical Analysis', 40)",
+                    "(62, 'Biology', 40)",
+                )
+            ),
+            Pair(
+                "CREATE TABLE SECTION (SectId int, CourseId int, Prof varchar(8), YearOffered int)",
+                arrayOf(
+                    "(13, 12, 'turing', 2018)",
+                    "(23, 12, 'turing', 2019)",
+                    "(33, 32, 'newton', 2019)",
+                    "(43, 32, 'einstein', 2017)",
+                    "(53, 62, 'brando', 2018)",
+                )
+            ),
         )
-        for (s in students)
-            stmt.executeUpdate(insert + s)
-        println("Inserted " + students.size + " rows into STUDENT")
+        for (table in initTables) {
+            val tableName = table.first.split(" ")[2]
+            stmt.executeUpdate("DROP TABLE $tableName")
+            stmt.executeUpdate(table.first)
+            println("Created table $tableName")
+            for (record in table.second)
+                stmt.executeUpdate("INSERT INTO $tableName VALUES $record")
+            println("Inserted " + table.second.size + " rows into $tableName")
+        }
+
     } catch (e: SQLException) {
         e.printStackTrace()
     }
@@ -121,6 +155,7 @@ private fun doQuery(stmt: Statement, cmd: String) {
                             val ival = rs.getInt(fieldName)
                             print(String.format(fmt, ival))
                         }
+
                         else -> {
                             val sval = rs.getString(fieldName)
                             print(String.format(fmt, sval))
