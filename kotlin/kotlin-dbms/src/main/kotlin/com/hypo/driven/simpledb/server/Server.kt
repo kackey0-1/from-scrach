@@ -97,7 +97,11 @@ private fun init(stmt: Statement) {
         )
         for (table in initTables) {
             val tableName = table.first.split(" ")[2]
-            stmt.executeUpdate("DROP TABLE $tableName")
+            try {
+                stmt.executeUpdate("DROP TABLE $tableName")
+            } catch (e: SQLException) {
+                // ignore
+            }
             stmt.executeUpdate(table.first)
             println("Created table $tableName")
             for (record in table.second)
