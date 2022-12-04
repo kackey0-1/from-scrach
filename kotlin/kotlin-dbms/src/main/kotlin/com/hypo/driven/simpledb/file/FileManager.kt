@@ -18,7 +18,6 @@ class FileManager(
     val dbDirectory: File,
     val blockSize: Int,
 ) {
-    var isNew: Boolean = !dbDirectory.exists()
     private val openFiles: MutableMap<String, RandomAccessFile> = mutableMapOf()
 
     /**
@@ -26,7 +25,7 @@ class FileManager(
      */
     init {
         // create the directory if the database is new
-        if (isNew) {
+        if (isNew()) {
             dbDirectory.mkdirs()
         }
 
@@ -40,6 +39,8 @@ class FileManager(
             }
         }
     }
+
+    fun isNew(): Boolean = !dbDirectory.exists()
 
     /**
      * 指定されたブロック[blockId]の内容を指定したページ[page]に読み込む
