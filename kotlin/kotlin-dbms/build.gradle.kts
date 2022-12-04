@@ -13,7 +13,12 @@ repositories {
 }
 
 dependencies {
-    implementation("junit:junit:4.13.1")
+    implementation("org.apache.derby:derby:10.16.1.1")
+    implementation("org.apache.derby:derbytools:10.16.1.1")
+    implementation("org.apache.derby:derbyshared:10.16.1.1")
+
+    implementation("com.google.guava:guava:31.1-jre")
+    implementation("junit:junit:4.13.2")
 }
 
 tasks.withType<KotlinCompile>() {
