@@ -18,7 +18,9 @@ dependencies {
     implementation("org.apache.derby:derbyshared:10.16.1.1")
 
     implementation("com.google.guava:guava:31.1-jre")
-    implementation("junit:junit:4.13.2")
+
+    // Use the Kotlin test library.
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 
 tasks.withType<KotlinCompile>() {
@@ -31,4 +33,8 @@ tasks.named<JavaExec>("run") {
 
 application {
     mainClass.set("com.hypo.driven.simpledb.server.ServerKt")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
