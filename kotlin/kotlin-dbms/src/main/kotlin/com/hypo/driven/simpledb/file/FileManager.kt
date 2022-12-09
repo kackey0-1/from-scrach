@@ -45,15 +45,13 @@ class FileManager(
     /**
      * 指定されたブロック[blockId]の内容を指定したページ[page]に読み込む
      */
-    fun read(blockId: BlockId, page: Page) {
-        synchronized(this) {
-            try {
-                val f = getFile(blockId.filename)
-                f.seek((blockId.number * blockSize).toLong())
-                f.channel.read(page.contents())
-            } catch (e: IOException) {
-                throw RuntimeException("cannot write block $blockId")
-            }
+    @Synchronized fun read(blockId: BlockId, page: Page) {
+        try {
+            val f = getFile(blockId.filename)
+            f.seek((blockId.number * blockSize).toLong())
+            f.channel.read(page.contents())
+        } catch (e: IOException) {
+            throw RuntimeException("cannot write block $blockId")
         }
     }
 
