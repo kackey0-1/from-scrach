@@ -13,12 +13,17 @@ repositories {
 }
 
 dependencies {
+    // derby
     implementation("org.apache.derby:derby:10.16.1.1")
     implementation("org.apache.derby:derbytools:10.16.1.1")
     implementation("org.apache.derby:derbyshared:10.16.1.1")
 
-    implementation("com.google.guava:guava:31.1-jre")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-common")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
+    implementation("com.google.guava:guava:31.1-jre")
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }

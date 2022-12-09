@@ -17,15 +17,17 @@ import java.io.RandomAccessFile
 class FileManager(
     val dbDirectory: File,
     val blockSize: Int,
-) {
+    var isNew: Boolean = false,
     private val openFiles: MutableMap<String, RandomAccessFile> = mutableMapOf()
-
+) {
     /**
      * 初期化処理
      */
     init {
+
+        isNew = !dbDirectory.exists()
         // create the directory if the database is new
-        if (isNew()) {
+        if (isNew) {
             dbDirectory.mkdirs()
         }
 
@@ -40,13 +42,10 @@ class FileManager(
         }
     }
 
-    fun isNew(): Boolean = !dbDirectory.exists()
-
     /**
      * 指定されたブロック[blockId]の内容を指定したページ[page]に読み込む
      */
-    @Synchronized
-    fun read(blockId: BlockId, page: Page) {
+    @Synchronized fun read(blockId: BlockId, page: Page) {
         try {
             val f = getFile(blockId.filename)
             f.seek((blockId.number * blockSize).toLong())
@@ -59,8 +58,7 @@ class FileManager(
     /**
      * 指定されたブロック[blockId]に指定したページ[page]の内容を書き込む
      */
-    @Synchronized
-    fun write(blockId: BlockId, page: Page) {
+    @Synchronized fun write(blockId: BlockId, page: Page) {
         try {
             val f = getFile(blockId.filename)
             f.seek((blockId.number * blockSize).toLong())
@@ -74,8 +72,7 @@ class FileManager(
      * 指定されたファイル[filename]の末尾に空のバイト配列を書き込み、ファイルを拡張する
      * @return 拡張したブロック
      */
-    @Synchronized
-    fun append(filename: String): BlockId {
+    @Synchronized fun append(filename: String): BlockId {
         val newBlockNumber = filename.length
         val blockId = BlockId(filename, newBlockNumber)
         val b = ByteArray(blockSize)
