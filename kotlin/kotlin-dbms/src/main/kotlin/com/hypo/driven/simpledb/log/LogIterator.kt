@@ -13,7 +13,11 @@ import com.hypo.driven.simpledb.file.Page
  * @property currentPosition ページ内の現在の読み込んでいる場所
  * @property boundary
  */
-class LogIterator(val fm: FileManager, var blockId: BlockId): Iterator<ByteArray> {
+class LogIterator(
+    private val fm: FileManager,
+    private var blockId: BlockId
+): Iterator<ByteArray> {
+
     private var page: Page
     private var currentPosition = 0
     private var boundary = 0

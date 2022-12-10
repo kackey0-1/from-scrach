@@ -20,8 +20,8 @@ class LogManager(
     private val fm: FileManager,
     private val logFile: String,
 ) {
-    var logPage: Page
-    var currentBlock: BlockId
+    private var logPage: Page
+    private var currentBlock: BlockId
     private var latestLSN = 0
     private var lastSavedLSN = 0
 
@@ -66,8 +66,7 @@ class LogManager(
      * バイト配列の[logRecord]をログファイルに保存する
      * @return 最新のログレコードの識別子
      */
-    @Synchronized
-    fun append(logRecord: ByteArray): Int {
+    @Synchronized fun append(logRecord: ByteArray): Int {
         var boundary = logPage.getInt(0)
         val recordSize = logRecord.size
         val bytesNeeded = recordSize + Integer.BYTES
