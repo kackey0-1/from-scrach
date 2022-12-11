@@ -13,11 +13,11 @@ class LogTest {
         val lm = LogManager(fm, "logtest")
         printLogRecords(lm, "The initial empty log file:") // print an empty log file
         println("done")
-//        createRecords(lm, 1, 35)
-//        printLogRecords(lm, "The log file now has these records:")
-//        createRecords(lm, 36, 70)
-//        lm.flush(65)
-//        printLogRecords(lm, "The log file now has these records:")
+        createRecords(lm, 1, 35)
+        printLogRecords(lm, "The log file now has these records:")
+        createRecords(lm, 36, 70)
+        lm.flush(65)
+        printLogRecords(lm, "The log file now has these records:")
     }
 
     private fun printLogRecords(lm: LogManager, msg: String) {
