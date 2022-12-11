@@ -8,7 +8,7 @@ import kotlin.test.Test
 class FileTest {
 
     @Test
-    fun test() {
+    fun `test_file_manager`() {
         val fileManager = FileManager(File("filetest"), 400)
         val block = BlockId("testfile", 2)
         val page1 = Page(fileManager.blockSize)
