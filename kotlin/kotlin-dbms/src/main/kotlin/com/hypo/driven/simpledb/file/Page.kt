@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
  */
 class Page {
     private var bb: ByteBuffer
-    private val charset = StandardCharsets.UTF_8
+    private val charset = StandardCharsets.US_ASCII
 
     constructor(blockSize: Int) {
         bb = ByteBuffer.allocateDirect(blockSize)

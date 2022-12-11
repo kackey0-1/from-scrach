@@ -73,7 +73,7 @@ class FileManager(
      * @return 拡張したブロック
      */
     @Synchronized fun append(filename: String): BlockId {
-        val newBlockNumber = filename.length
+        val newBlockNumber = length(filename)
         val blockId = BlockId(filename, newBlockNumber)
         val b = ByteArray(blockSize)
         try {
