@@ -15,7 +15,7 @@ import com.hypo.driven.simpledb.file.Page
  */
 class LogIterator(
     private val fm: FileManager,
-    private var blockId: BlockId
+    private var blockId: BlockId,
 ): Iterator<ByteArray> {
 
     private var page: Page
@@ -58,8 +58,8 @@ class LogIterator(
     /**
      * [blk]のブロックの内容をページに読み込み、現在の場所に設定する
      */
-    private fun moveToBlock(blk: BlockId) {
-        fm.read(blk, page)
+    private fun moveToBlock(blockId: BlockId) {
+        fm.read(blockId, page)
         boundary = page.getInt(0)
         currentPosition = boundary
     }
