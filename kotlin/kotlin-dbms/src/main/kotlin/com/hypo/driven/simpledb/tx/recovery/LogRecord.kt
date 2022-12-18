@@ -1,7 +1,7 @@
-package simpledb.tx.recovery
+package com.hypo.driven.simpledb.tx.recovery
 
-import simpledb.file.Page
-import simpledb.tx.Transaction
+import com.hypo.driven.simpledb.file.Page
+import com.hypo.driven.simpledb.tx.Transaction
 
 enum class Operator(val id: Int) {
     CHECKPOINT(0),

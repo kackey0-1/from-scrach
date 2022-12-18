@@ -1,9 +1,10 @@
-package simpledb.tx.recovery
+package com.hypo.driven.simpledb.tx.recovery
 
-import simpledb.buffer.Buffer
-import simpledb.buffer.BufferManager
-import simpledb.log.LogManager
-import simpledb.tx.Transaction
+import com.hypo.driven.simpledb.buffer.Buffer
+import com.hypo.driven.simpledb.buffer.BufferManager
+import com.hypo.driven.simpledb.log.LogManager
+import com.hypo.driven.simpledb.tx.Transaction
+
 
 /**
  * RecoverManagerはACID特性の原子性と耐久性を持つ

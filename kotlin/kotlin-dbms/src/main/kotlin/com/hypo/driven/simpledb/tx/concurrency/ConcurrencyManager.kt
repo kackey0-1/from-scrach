@@ -1,6 +1,6 @@
-package simpledb.tx.concurrency
+package com.hypo.driven.simpledb.tx.concurrency
 
-import simpledb.file.BlockId
+import com.hypo.driven.simpledb.file.BlockId
 
 /**
  * ConcurrencyManagerはACID特性の一貫性と独立性を持つ

@@ -1,11 +1,11 @@
-package simpledb.tx
+package com.hypo.driven.simpledb.tx
 
-import simpledb.buffer.BufferManager
-import simpledb.file.BlockId
-import simpledb.file.FileManager
-import simpledb.log.LogManager
-import simpledb.tx.concurrency.ConcurrencyManager
-import simpledb.tx.recovery.RecoveryManager
+import com.hypo.driven.simpledb.buffer.BufferManager
+import com.hypo.driven.simpledb.file.BlockId
+import com.hypo.driven.simpledb.file.FileManager
+import com.hypo.driven.simpledb.log.LogManager
+import com.hypo.driven.simpledb.tx.concurrency.ConcurrencyManager
+import com.hypo.driven.simpledb.tx.recovery.RecoveryManager
 
 /**
  * TransactionはRecoveryManager、ConcurrencyManagerからACID特性を実現するために使用される
@@ -169,7 +169,7 @@ class Transaction(
 
         @Synchronized
         fun nextTransactionNumber(): Int {
-            this.nextTransactionNumber++
+            nextTransactionNumber++
             println("new transaction $nextTransactionNumber")
             return nextTransactionNumber
         }

@@ -1,8 +1,8 @@
-package simpledb.tx
+package com.hypo.driven.simpledb.tx
 
-import simpledb.buffer.Buffer
-import simpledb.buffer.BufferManager
-import simpledb.file.BlockId
+import com.hypo.driven.simpledb.buffer.Buffer
+import com.hypo.driven.simpledb.buffer.BufferManager
+import com.hypo.driven.simpledb.file.BlockId
 
 /**
  * トランザクションで管理されてるバッファのリストクラス

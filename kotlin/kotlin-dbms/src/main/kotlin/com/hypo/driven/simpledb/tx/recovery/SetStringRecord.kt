@@ -1,9 +1,10 @@
-package simpledb.tx.recovery
+package com.hypo.driven.simpledb.tx.recovery
 
-import simpledb.file.BlockId
-import simpledb.file.Page
-import simpledb.log.LogManager
-import simpledb.tx.Transaction
+import com.hypo.driven.simpledb.file.BlockId
+import com.hypo.driven.simpledb.file.Page
+import com.hypo.driven.simpledb.log.LogManager
+import com.hypo.driven.simpledb.tx.Transaction
+
 
 /**
  * @property blockId: 変更されたファイルの名前とブロック番号
