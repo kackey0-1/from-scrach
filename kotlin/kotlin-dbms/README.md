@@ -4,6 +4,7 @@
 - FileManager
 - LogManager
 - BufferManager
+- TransactionManager
 
 ## FileManager
 - responsible for the operation of the OS's file system
@@ -23,6 +24,16 @@
   - The FIFO Strategy
   - The LRU Strategy
   - The Clock Strategy
+
+## Transaction Manager
+
+- Transaction consists of three categories
+  - 1st category consists of methods related to transaction's lifespan
+    - commit/rollback
+  - 2nd category consists of methods to access buffers(memory)
+    - pin/unpin
+  - 3rd category consists of methods related to the file manager
+    - size/append/blockSize
 
 # [About Derby](https://db.apache.org/derby/docs/10.16/getstart/index.html)
 
